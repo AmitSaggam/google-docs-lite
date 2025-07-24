@@ -8,14 +8,32 @@ require("dotenv").config();
 const Document = require("./models/Document");
 
 const app = express();
-app.use(cors());
+
+// ✅ CORS whitelist
+const allowedOrigins = [
+  "https://google-docs-lite-topaz.vercel.app",
+  "https://google-docs-lite-git-main-amit-saggams-projects.vercel.app",
+  "https://google-docs-lite-9kp669n5u-amit-saggams-projects.vercel.app"
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"]
+}));
+
 app.use(express.json());
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: allowedOrigins,
     methods: ["GET", "POST"]
   }
 });
@@ -26,13 +44,11 @@ mongoose.connect(process.env.MONGO_URI)
 
 // 📦 REST API
 
-// Get all documents
 app.get("/documents", async (req, res) => {
   const docs = await Document.find({}, "_id name");
   res.json(docs);
 });
 
-// Create a new document
 app.post("/documents", async (req, res) => {
   const { _id } = req.body;
   const doc = await Document.create({
@@ -43,14 +59,12 @@ app.post("/documents", async (req, res) => {
   res.json(doc);
 });
 
-// Rename a document
 app.put("/documents/:id", async (req, res) => {
   const { name } = req.body;
   await Document.findByIdAndUpdate(req.params.id, { name });
   res.json({ success: true });
 });
 
-// Delete a document
 app.delete("/documents/:id", async (req, res) => {
   try {
     console.log("Deleting document:", req.params.id);
