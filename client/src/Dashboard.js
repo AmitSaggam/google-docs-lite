@@ -12,14 +12,14 @@ const Dashboard = () => {
   }, []);
 
   const fetchDocuments = async () => {
-    const res = await fetch("http://localhost:3001/documents");
+    const res = await fetch("https://google-docs-backend-tbs9.onrender.com/documents");
     const data = await res.json();
     setDocuments(data);
   };
 
   const createNewDoc = async () => {
     const id = uuidV4();
-    await fetch("http://localhost:3001/documents", {
+    await fetch("https://google-docs-backend-tbs9.onrender.com/documents", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ _id: id }),
@@ -32,7 +32,7 @@ const Dashboard = () => {
   if (!confirm) return;
 
   try {
-    const response = await fetch(`http://localhost:3001/documents/${id}`, {
+    const response = await fetch(`https://google-docs-backend-tbs9.onrender.com/documents/${id}`, {
       method: "DELETE",
     });
 
@@ -56,7 +56,7 @@ const Dashboard = () => {
     const newName = prompt("Rename document:", currentName);
     if (!newName || newName === currentName) return;
 
-    await fetch(`http://localhost:3001/documents/${id}`, {
+    await fetch(`https://google-docs-backend-tbs9.onrender.com/documents/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName }),

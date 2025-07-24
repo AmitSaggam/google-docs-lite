@@ -14,7 +14,7 @@ const Editor = () => {
 
   // 1. Connect socket
   useEffect(() => {
-    const s = io("http://localhost:3001");
+    const s = io("https://google-docs-backend-tbs9.onrender.com");
     setSocket(s);
     return () => s.disconnect();
   }, []);
